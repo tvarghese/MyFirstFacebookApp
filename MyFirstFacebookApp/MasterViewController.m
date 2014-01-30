@@ -84,8 +84,9 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
     id <FBGraphObject> object = self.relevantFeedStories[indexPath.row];
-    cell.textLabel.text = [object objectForKey:@"story"];
-    NSLog(@"%@",[object objectForKey:@"story"]);
+    cell.textLabel.text = object[@"id"];
+    //cell.imageView.image = [UIImage imag]
+    //NSLog(@"%@",[object objectForKey:@"story"]);
 
     return cell;
 }

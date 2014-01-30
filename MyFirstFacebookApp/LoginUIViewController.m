@@ -116,7 +116,7 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    FBLoginView *loginView = [[FBLoginView alloc] initWithReadPermissions:@[@"user_actions.news",@"user_friends",@"friends_status", @"friends_actions.news",@"manage_notifications",@"read_stream" ]];
+    FBLoginView *loginView = [[FBLoginView alloc] initWithReadPermissions:@[@"user_friends",@"user_photos", @"user_videos",@"user_photo_video_tags", @"friends_photo_video_tags", @"friends_photos",@"read_stream" ]];
     
     //@[@"user_videos",@"user_friends",@"user_photo_video_tags",@"user_status",@"user_photos",@"friends_photo_video_tags",@"friends_status", @"friends_photos",@"friends_videos",@"read_stream" ]
     
@@ -150,7 +150,7 @@
 }
 
 - (void) initateUsersFeed {
-    [FBRequestConnection startWithGraphPath:@"me/feed?fields=likes,story,comments"
+    /*[FBRequestConnection startWithGraphPath:@"/me?fields=albums.fields(name)"
                                  parameters:nil
                                  HTTPMethod:@"GET"
                           completionHandler:^(
@@ -158,20 +158,40 @@
                                               id result,
                                               NSError *error
                                               ) {
-                              /* handle the result */
-                              for (id <FBGraphObject> graphObject in [result objectForKey:@"data"] ) {
-                                  if ([graphObject objectForKey:@"likes"] != nil) {
-                                      if (!_relevantFeedStories) {
-                                          _relevantFeedStories = [[NSMutableArray alloc] init];
-                                      }
-                                      if ([graphObject objectForKey:@"story"] != nil) {
-                                          [self.relevantFeedStories addObject:graphObject];
-                                      }
-
+     
+                              for (id <FBGraphObject> graphObject in (result[@"albums"])[@"data"] ) {
+                                  if([graphObject[@"name"] isEqualToString:@"Profile Pictures"]){
+                                      
+                                      NSString *graphPath = [NSString stringWithFormat:@"%@?fields=photos.fields(picture,source,id,likes.limit(25))",graphObject[@"id"]];
+                                      
+                                      [FBRequestConnection startWithGraphPath:graphPath
+                                                                   parameters:nil
+                                                                   HTTPMethod:@"GET"
+                                                            completionHandler:^(
+                                                                                FBRequestConnection *connection,
+                                                                                id result,
+                                                                                NSError *error
+                                                                                ) {
+                                                                
+                                                                for (id <FBGraphObject> graphObject in result[@"photos"][@"data"]){
+                                                                    NSLog(@"%@",result);
+                                                                    
+                                                                    if (!_relevantFeedStories) {
+                                                                        _relevantFeedStories = [[NSMutableArray alloc] init];
+                                                                    }
+                                                                    [self.relevantFeedStories addObject:graphObject];
+                                                                    
+                                                                }
+                                                                
+                                                            }];
+                                      
                                   }
                               }
                             self.monitorMyFeedButton.hidden = NO;
                           }];
+    
+ */
+
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
