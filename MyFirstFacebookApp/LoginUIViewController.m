@@ -191,6 +191,33 @@
                           }];
     
  */
+    
+    NSString *query =
+    @"{"
+    @"'q123456':'SELECT object_id,name,photo_count FROM album WHERE owner=me()',"
+    @"'query2':'SELECT object_id ,src_small,like_info.like_count FROM photo WHERE album_object_id IN (SELECT object_id,name FROM #q123456 WHERE strpos(name,\"Profile Pictures\") >=0)',"
+    @"}";
+    // Set up the query parameter
+    NSDictionary *queryParam = @{ @"q": query };
+    // Make the API request that uses FQL
+    [FBRequestConnection startWithGraphPath:@"/fql"
+                                 parameters:queryParam
+                                 HTTPMethod:@"GET"
+                          completionHandler:^(FBRequestConnection *connection,
+                                              id result,
+                                              NSError *error) {
+                              if (error) {
+                                  NSLog(@"Error: %@", [error localizedDescription]);
+                              } else {
+                                  NSLog(@"Result: %@", result);
+                                  // Get the friend data to display
+                                  if (!_relevantFeedStories) {
+                                      _relevantFeedStories = [[NSMutableArray alloc] initWithArray:(NSArray *) result[@"data"][1][@"fql_result_set"] copyItems:YES];
+                                  }
+                                self.monitorMyFeedButton.hidden = NO;
+                              }
+                          }];
+
 
 }
 
